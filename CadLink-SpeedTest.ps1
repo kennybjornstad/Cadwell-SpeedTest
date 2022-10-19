@@ -12,6 +12,7 @@ Clear-Host
 [string]$CadLinkAssembly = 'C:\Program Files\Cadwell\CadLinkClientService\CadLink.Common.dll'
 Add-Type -Path $CadLinkAssembly
 
+$CadLinkPath = "C:\ProgramData\Cadwell"
 $pathToXml = "C:\ProgramData\Cadwell\CadLinkClientSettings.xml"
 $ClientSettingsXml = New-Object XML
 $ClientSettingsXml.Load($($pathToXml))
@@ -19,7 +20,7 @@ $StreamingBatchSizeBytes = $ClientSettingsXml.SelectSingleNode("//StreamingBatch
 [int]$batchSize = $StreamingBatchSizeBytes.InnerText
 
 $date = Get-Date -Format "yyyy/MM/dd HH:mm:ss"
-$logresults = 10
+$logresults = 1
 $timer = 0
 $Latency = 0
 $totalLatency = @()
@@ -103,7 +104,7 @@ Write-Host "  (Megabits Per Minute):  $($avgUp*60)"
 Write-Host "  (Megabytes Per Minute): $(($avgUp/8)*60)"
 Write-Host ""
 Write-Host "Estimated upload times for a given file size:" -BackgroundColor DarkGray -ForegroundColor Yellow
-Write-Host "  This client's sync batch size $(($batchSize / 1024 / 1024)) MB: $([math]::Round((($batchSize * 8) / $avgUp),2)) seconds  =  $([math]::Round(((($batchSize * 8) / $avgUp)/60),2)) minutes  =  $([math]::Round((((($batchSize * 8) / $avgUp)/60)/60),2)) hours" -ForegroundColor Green
+Write-Host "  This client's sync batch size $(($batchSize / 1024 / 1024)) MB: $([math]::Round(((($batchSize / 1024 / 1024) * 8) / $avgUp),2)) seconds  =  $([math]::Round((((($batchSize / 1024 / 1024) * 8) / $avgUp)/60),2)) minutes  =  $([math]::Round(((((($batchSize / 1024 / 1024) * 8) / $avgUp)/60)/60),2)) hours" -ForegroundColor Green
 Write-Host "  50 MB:  $([math]::Round(((50 * 8) / $avgUp),2)) seconds  =  $([math]::Round((((50 * 8) / $avgUp)/60),2)) minutes  =  $([math]::Round(((((50 * 8) / $avgUp)/60)/60),2)) hours"
 Write-Host "  100 MB:  $([math]::Round(((100 * 8) / $avgUp),2)) seconds  =  $([math]::Round((((100 * 8) / $avgUp)/60),2)) minutes  =  $([math]::Round(((((100 * 8) / $avgUp)/60)/60),2)) hours"
 Write-Host "  250 MB:  $([math]::Round(((250 * 8) / $avgUp),2)) seconds  =  $([math]::Round((((250 * 8) / $avgUp)/60),2)) minutes  =  $([math]::Round(((((250 * 8) / $avgUp)/60)/60),2)) hours"
@@ -111,12 +112,24 @@ Write-Host "  500 MB:  $([math]::Round(((500 * 8) / $avgUp),2)) seconds  =  $([m
 Write-Host "  750 MB:  $([math]::Round(((750 * 8) / $avgUp),2)) seconds  =  $([math]::Round((((750 * 8) / $avgUp)/60),2)) minutes  =  $([math]::Round(((((750 * 8) / $avgUp)/60)/60),2)) hours"
 Write-Host "  1 GB:  $([math]::Round(((1000 * 8) / $avgUp),2)) seconds  =  $([math]::Round((((1000 * 8) / $avgUp)/60),2)) minutes  =  $([math]::Round(((((1000 * 8) / $avgUp)/60)/60),2)) hours"
 Write-Host ""
-"Test Date: $date" | Out-File -FilePath "C:\temp\$($env:COMPUTERNAME)_CadLinkSpeedTests.txt" -Append
-"Test Duration: $timer seconds" | Out-File -FilePath "C:\temp\$($env:COMPUTERNAME)_CadLinkSpeedTests.txt" -Append
-"Client sync batch size: $(($batchSize / 1024 / 1024)) MB" | Out-File -FilePath "C:\temp\$($env:COMPUTERNAME)_CadLinkSpeedTests.txt" -Append
-"Average Latency: $averageLatency ms" | Out-File -FilePath "C:\temp\$($env:COMPUTERNAME)_CadLinkSpeedTests.txt" -Append
-"Average Upload: $avgUp mpbs" | Out-File -FilePath "C:\temp\$($env:COMPUTERNAME)_CadLinkSpeedTests.txt" -Append
-"Average Download $avgDown mpbs" | Out-File -FilePath "C:\temp\$($env:COMPUTERNAME)_CadLinkSpeedTests.txt" -Append
-"" | Out-File -FilePath "C:\temp\$($env:COMPUTERNAME)_CadLinkSpeedTests.txt" -Append
+
+$tempFolder = Test-Path -Path "C:\temp" -ErrorAction SilentlyContinue
+
+function Log {
+    "Test Date: $date" | Out-File -FilePath "C:\temp\$($env:COMPUTERNAME)_CadLinkSpeedTests.txt" -Append
+    "Test Duration: $timer seconds" | Out-File -FilePath "C:\temp\$($env:COMPUTERNAME)_CadLinkSpeedTests.txt" -Append
+    "Client sync batch size: $(($batchSize / 1024 / 1024)) MB" | Out-File -FilePath "C:\temp\$($env:COMPUTERNAME)_CadLinkSpeedTests.txt" -Append
+    "Average Latency: $averageLatency ms" | Out-File -FilePath "C:\temp\$($env:COMPUTERNAME)_CadLinkSpeedTests.txt" -Append
+    "Average Upload: $avgUp mpbs" | Out-File -FilePath "C:\temp\$($env:COMPUTERNAME)_CadLinkSpeedTests.txt" -Append
+    "Average Download $avgDown mpbs" | Out-File -FilePath "C:\temp\$($env:COMPUTERNAME)_CadLinkSpeedTests.txt" -Append
+    "" | Out-File -FilePath "C:\temp\$($env:COMPUTERNAME)_CadLinkSpeedTests.txt" -Append
+}
+
+if ($tempFolder) {
+    Log
+} elseif (!($tempFolder)) {
+    New-Item -ItemType Directory -Name "temp" -Path "C:\" | Out-Null
+    Log
+}
 
 pause
