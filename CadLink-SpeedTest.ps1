@@ -103,7 +103,7 @@ Write-Host "  (Megabits Per Minute):  $($avgUp*60)"
 Write-Host "  (Megabytes Per Minute): $(($avgUp/8)*60)"
 Write-Host ""
 Write-Host "Estimated upload times for a given file size:" -BackgroundColor DarkGray -ForegroundColor Yellow
-Write-Host "  This client's sync batch size $(($batchSize / 1024 / 1024)) MB: $([math]::Round(((50 * 8) / $avgUp),2)) seconds  =  $([math]::Round((((50 * 8) / $avgUp)/60),2)) minutes  =  $([math]::Round(((((50 * 8) / $avgUp)/60)/60),2)) hours" -ForegroundColor Green
+Write-Host "  This client's sync batch size $(($batchSize / 1024 / 1024)) MB: $([math]::Round((($batchSize * 8) / $avgUp),2)) seconds  =  $([math]::Round(((($batchSize * 8) / $avgUp)/60),2)) minutes  =  $([math]::Round((((($batchSize * 8) / $avgUp)/60)/60),2)) hours" -ForegroundColor Green
 Write-Host "  50 MB:  $([math]::Round(((50 * 8) / $avgUp),2)) seconds  =  $([math]::Round((((50 * 8) / $avgUp)/60),2)) minutes  =  $([math]::Round(((((50 * 8) / $avgUp)/60)/60),2)) hours"
 Write-Host "  100 MB:  $([math]::Round(((100 * 8) / $avgUp),2)) seconds  =  $([math]::Round((((100 * 8) / $avgUp)/60),2)) minutes  =  $([math]::Round(((((100 * 8) / $avgUp)/60)/60),2)) hours"
 Write-Host "  250 MB:  $([math]::Round(((250 * 8) / $avgUp),2)) seconds  =  $([math]::Round((((250 * 8) / $avgUp)/60),2)) minutes  =  $([math]::Round(((((250 * 8) / $avgUp)/60)/60),2)) hours"
