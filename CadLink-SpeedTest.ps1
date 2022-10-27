@@ -34,7 +34,7 @@ $StreamingBatchSizeBytes = $ClientSettingsXml.SelectSingleNode("//StreamingBatch
 [int]$batchSize = $StreamingBatchSizeBytes.InnerText
 
 $date = Get-Date -Format "yyyy/MM/dd HH:mm:ss"
-$logresults = 1
+$testiterations = 1
 $timer = 0
 $Latency = 0
 $totalLatency = @()
@@ -46,7 +46,7 @@ $DownloadSpeed = 0
 $totalDownload = @()
 $sumTotalDownload = 0
 
-Write-Host "Test started at $(Get-Date -Format `"HH:mm:ss yyyy/MM/dd`")"
+Write-Host "Test started at $(Get-Date -Format `"HH:mm:ss yyyy/MM/dd`"). Test will run $testiterations times."
 Write-Host "The time needed to run this test will vary based on latency."
 Write-Host "If latency is high, this test will take a long time to complete."
 Write-Host ""
@@ -55,7 +55,7 @@ do {
     
     Start-Sleep 1
     
-    $logresults -= 1
+    $testiterations -= 1
     $timer += 1 
     
     $runtest = [CadLink.Common.Communication.NetworkDoctor]::RunTestsAndLogResults()  
@@ -79,12 +79,13 @@ do {
 
 while (
 
-    $logresults -ge 1
+    $testiterations -ge 1
 
 )
 
 Write-Host "Test completed at $(Get-Date -Format `"HH:mm:ss yyyy/MM/dd`")"
-Write-Host "Estimated Test Duration: $([math]::Round($($timer/60),2)) minute(s)"
+#Write-Host "Estimated Test Duration: $([math]::Round($($timer/60),2)) minute(s)"
+Write-Host "Test ran $timer times"
 Write-Host ""
 Write-Host "Average Latency:" -BackgroundColor DarkGray -ForegroundColor Yellow
 if (($averageLatency -gt 0) -and ($averageLatency -le 20)) {
