@@ -1,9 +1,23 @@
-# Uncomment this if scriptblock to force running as administrator and bypass local execution policy
-#if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) 
-#{ 
-#    Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs
-#    exit 
-#}
+<# Common batch sizes and the method to convert them from MB to Bytes and MB to Bytes :)
+To convert MB to Bytes:
+MB x 1048576
+To convert Bytes to MB:
+Bytes / 1048576
+
+Common batch sizes:
+10MB = 10,485,760
+15MB = 15,728,640
+20MB = 20,971,520
+25MB = 26,214,400
+#>
+
+<# Uncomment this if scriptblock to force running as administrator and bypass local execution policy
+if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) 
+{ 
+    Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs
+    exit 
+}
+#>
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls -bor [Net.SecurityProtocolType]::Tls11 -bor [Net.SecurityProtocolType]::Tls12 -bor [Net.SecurityProtocolType]::Tls13
 
